@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Models;
 
 namespace DataAcess
 {
@@ -9,6 +10,8 @@ namespace DataAcess
         {
             
         }
+
+        public DbSet<ApplicationUser> ApplicationUser { get; set; }
 
     }
 }
