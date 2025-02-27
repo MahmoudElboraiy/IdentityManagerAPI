@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Models.DTOs.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace Models.DTOs.Mapper
     {
         public MappingConfig()
         {
-            
+            CreateMap<ApplicationUser, UserDTO>().ReverseMap();
         }
     }
 }

@@ -54,12 +54,15 @@ namespace DataAcess.Repos
                     User = null,
                 };
             }
+            var userRoles = await userManager.GetRolesAsync(user);
 
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Name, user.UserName)
             };
+            claims.AddRange(userRoles.Select(r => new Claim(ClaimTypes.Role, r)));
 
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(securityKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -93,6 +96,19 @@ namespace DataAcess.Repos
                 var result = await userManager.CreateAsync(user, registerRequestDTO.Password);
                 if (result.Succeeded)
                 {
+
+                    if (registerRequestDTO.Roles != null && registerRequestDTO.Roles.Any()) // any() is a LINQ method that returns true if there are any elements in the collection
+                    {
+                        foreach (var role in registerRequestDTO.Roles)
+                        {
+                            if (!await roleManager.RoleExistsAsync(role))
+                            {
+                                await roleManager.CreateAsync(new IdentityRole(role));
+                            }
+                            await userManager.AddToRoleAsync(user, role);
+                        }   
+                    }
+
                     userDTO = mapper.Map<UserDTO>(user);
                 }
                 else
@@ -109,3 +125,13 @@ namespace DataAcess.Repos
         }
     }
 }
+
+
+//foreach (var role in registerRequestDTO.Roles)
+//{
+//    if (!await roleManager.RoleExistsAsync(role))
+//    {
+//        await roleManager.CreateAsync(new IdentityRole(role));
+//    }
+//}
+//await userManager.AddToRolesAsync(user, registerRequestDTO.Roles);

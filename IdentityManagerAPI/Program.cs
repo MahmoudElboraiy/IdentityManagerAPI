@@ -9,6 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;
+using DataAcess.Repos;
+using DataAcess.Repos.IRepos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,25 +22,29 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configure Identity
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
-{
-    options.Password.RequireDigit = true;
-    options.Password.RequiredLength = 6;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireLowercase = true;
-})
-.AddEntityFrameworkStores<ApplicationDbContext>()
-.AddDefaultTokenProviders();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingConfig));
+
+
+builder.Services.AddScoped<UserManager<ApplicationUser>>();
+builder.Services.AddScoped<SignInManager<ApplicationUser>>();
+builder.Services.AddScoped<RoleManager<IdentityRole>>();
+
+// Add Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Add OpenAPI with Bearer Authentication Support
 builder.Services.AddOpenApi("v1", options =>
 {
     options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
+
+
 
 // Configure JWT Authentication insted of cookies
 var key = Encoding.ASCII.GetBytes(builder.Configuration["ApiSettings:Secret"]);
@@ -55,9 +61,10 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(key),
         ValidateIssuer = false,
         ValidateAudience = false,
-        ClockSkew = TimeSpan.Zero
+        ClockSkew = TimeSpan.FromDays(7)
     };
 });
+
 
 var app = builder.Build();
 
