@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Models.Domain;
 using Models.DTOs.User;
 using System;
 using System.Collections.Generic;

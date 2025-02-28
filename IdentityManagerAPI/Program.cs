@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Models.DTOs.Mapper;
-using Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -11,6 +10,7 @@ using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;
 using DataAcess.Repos;
 using DataAcess.Repos.IRepos;
+using Models.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 

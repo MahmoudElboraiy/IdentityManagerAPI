@@ -1,4 +1,4 @@
-﻿using Models;
+﻿using Models.Domain;
 using Models.DTOs.Auth;
 using Models.DTOs.User;
 using System;
