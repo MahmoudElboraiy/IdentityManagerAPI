@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using DataAcess.Repos.IRepos;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models.Domain;
 using Models.DTOs.image;
@@ -9,9 +10,16 @@ namespace IdentityManagerAPI.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly IImageRepository imageRepo;
+
+        public UserController(IImageRepository imageRepo)
+        {
+            this.imageRepo = imageRepo;
+        }
+
         [HttpPost]
         [Route("uploadUserImage")]
-        public IActionResult UploadUserImage([FromForm] ImageUpIoadRequestDto request)
+        public async Task<IActionResult> UploadUserImage([FromForm] ImageUpIoadRequestDto request)
         {
 
             ValidateFileUpload(request);
@@ -27,7 +35,8 @@ namespace IdentityManagerAPI.Controllers
                 };
 
                 //repo logic
-
+                await imageRepo.Upload(image); 
+                return Ok(image);
 
             }
 
