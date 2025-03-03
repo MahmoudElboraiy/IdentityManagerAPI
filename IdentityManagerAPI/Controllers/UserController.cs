@@ -13,22 +13,31 @@ namespace IdentityManagerAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IImageRepository imageRepo;
+        private readonly IUserRepository userRepo;
 
-        public UserController(IImageRepository imageRepo)
+
+        public UserController(IImageRepository imageRepo , IUserRepository userRepo)
         {
             this.imageRepo = imageRepo;
+            this.userRepo = userRepo;
         }
+
+        public IUserRepository UserRepo { get; }
 
         [HttpPost]
         [Authorize]
         [Route("uploadUserImage")]
         public async Task<IActionResult> UploadUserImage([FromForm] ImageUploadRequestDto request)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdString == null)
             {
                 return BadRequest("User not found");
             }
+
+
+            var user = await userRepo.GetUserByID(userIdString);
+
 
             ValidateFileUpload(request);
             if (ModelState.IsValid)
@@ -43,13 +52,13 @@ namespace IdentityManagerAPI.Controllers
                 };
 
                 //repo logic
-                await imageRepo.Upload(image); 
-                return Ok(image);
-
+                await imageRepo.Upload(image);
+                user.ImageId = image.Id;
+                await userRepo.UpdateAsync(user);
+                return Ok(user);
             }
             return BadRequest(ModelState);
         }
-
 
 
         private void ValidateFileUpload(ImageUploadRequestDto request)

@@ -25,7 +25,7 @@ namespace DataAcess.Repos
 
         public async Task<Image> Upload(Image image)
         {
-            var localFilepath = Path.Combine(webHostEnvironment.WebRootPath, "Images", $"{image.FileName}.{image.FileExtension}");
+            var localFilepath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", $"{image.FileName}.{image.FileExtension}");
 
             using var fileStream = new FileStream(localFilepath, FileMode.Create);
             await image.File.CopyToAsync(fileStream);

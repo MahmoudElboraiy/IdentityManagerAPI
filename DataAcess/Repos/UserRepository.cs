@@ -37,6 +37,12 @@ namespace DataAcess.Repos
             securityKey = configuration.GetValue<string>("ApiSettings:Secret") ?? throw new InvalidOperationException("ApiSettings:Secret is not configured.");
         }
 
+        public async Task<ApplicationUser> GetUserByID(string userID)
+        {
+            var user = await db.ApplicationUser.FindAsync(userID);
+            return user ?? throw new InvalidOperationException("User not found.");
+        }
+
         public async Task<bool> IsUniqueUserName(string username)
         {
             var matchUsername = await userManager.FindByNameAsync(username);
@@ -123,15 +129,23 @@ namespace DataAcess.Repos
 
             return userDTO;
         }
+
+        public async Task<bool> UpdateAsync(ApplicationUser user)
+        {
+            var existingUser = await db.ApplicationUser.FindAsync(user.Id);
+            if (existingUser == null)
+            {
+                return false;
+            }
+
+            if (user.ImageId != 0 || user.ImageId != null)
+            {
+                existingUser.ImageId = user.ImageId;
+            }
+
+            var result = await db.SaveChangesAsync();
+            return result > 0;
+        }
+
     }
 }
-
-
-//foreach (var role in registerRequestDTO.Roles)
-//{
-//    if (!await roleManager.RoleExistsAsync(role))
-//    {
-//        await roleManager.CreateAsync(new IdentityRole(role));
-//    }
-//}
-//await userManager.AddToRolesAsync(user, registerRequestDTO.Roles);
