@@ -1,8 +1,10 @@
 ﻿using DataAcess.Repos.IRepos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models.Domain;
 using Models.DTOs.image;
+using System.Security.Claims;
 
 namespace IdentityManagerAPI.Controllers
 {
@@ -18,9 +20,15 @@ namespace IdentityManagerAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("uploadUserImage")]
-        public async Task<IActionResult> UploadUserImage([FromForm] ImageUpIoadRequestDto request)
+        public async Task<IActionResult> UploadUserImage([FromForm] ImageUploadRequestDto request)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return BadRequest("User not found");
+            }
 
             ValidateFileUpload(request);
             if (ModelState.IsValid)
@@ -39,15 +47,12 @@ namespace IdentityManagerAPI.Controllers
                 return Ok(image);
 
             }
-
             return BadRequest(ModelState);
         }
 
 
 
-
-
-        private void ValidateFileUpload(ImageUpIoadRequestDto request)
+        private void ValidateFileUpload(ImageUploadRequestDto request)
         {
             if (request.File == null)
             {
