@@ -1,23 +1,25 @@
-```md
-# .NET Clean Architecture(Onion Architecture) Starter Template 
+# .NET Clean Architecture (Onion Architecture) Starter Template  
 
 Welcome to the **.NET Clean Architecture Starter Template**!  
 This repository serves as a well-structured **boilerplate** for building scalable .NET applications following clean architecture principles.
 
-## 📌 Overview
+## 📌 Overview  
 
-This template provides:
-- A **modular and scalable** project structure.
-- **Clean Architecture** principles (Domain-Driven Design).
-- **Entity Framework Core** setup for database management.
-- **Repository & Service pattern** for better code maintainability.
-- **ASP.NET Identity** for authentication & role-based authorization.
-- **AutoMapper** for DTO mapping.
-- **Middleware setup** for security & request handling.
-- **Dependency Injection** for better code organization.
-- **Swagger** for API documentation.
+This template provides:  
+- A **modular and scalable** project structure.  
+- **Clean Architecture** principles (Domain-Driven Design).  
+- **Entity Framework Core** setup for database management.  
+- **Repository & Service pattern** for better code maintainability.  
+- **ASP.NET Identity** for authentication & role-based authorization.  
+- **AutoMapper** for DTO mapping.  
+- **Middleware setup** for security & request handling.  
+- **Dependency Injection** for better code organization.  
+- **Exception Handling Middleware (`IHandlerException`)** to manage errors efficiently.  
+- **Scalar API documentation integration** for improved OpenAPI documentation.  
+
 
 ## 📂 Project Structure
+```md
 
 IdentityManagerAPI/
 │── .gitignore
@@ -72,15 +74,15 @@ IdentityManagerAPI/
 │   │   ├── User/
 │   │   │   ├── UserDTO.cs
 ├──
-
+```
 ---
 
 ## 🚀 Getting Started
 
-### **1️⃣ Clone the Repository**
-```sh
-git clone https://github.com/your-username/dotnet-clean-architecture-template.git
-cd dotnet-clean-architecture-template
+### 1️⃣ Clone the Repository  
+```bash
+git clone https://github.com/mrXrobot26/IdentityManagerAPI.git
+cd IdentityManagerAPI
 ```
 
 ### **2️⃣ Setup Database & Migrations**
@@ -91,6 +93,7 @@ cd dotnet-clean-architecture-template
    }
    ```
 2. **Apply Migrations:**
+   
    ```sh
    dotnet ef database update
    ```
@@ -149,11 +152,6 @@ http://localhost:5025/scalar/v1
 2. Create a new branch (`feature-branch`).
 3. Commit your changes.
 4. Push to your fork and create a **Pull Request**.
----
-
-## 📜 License
-This project is licensed under the **MIT License**.
-
 ---
 ### 🔥 **Star the Repo & Contribute!**
 This template is open-source and constantly evolving.  
