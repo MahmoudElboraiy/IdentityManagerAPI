@@ -12,6 +12,9 @@ using DataAcess.Repos;
 using DataAcess.Repos.IRepos;
 using Models.Domain;
 using Microsoft.Extensions.FileProviders;
+using IdentityManagerAPI.Middlewares;
+using IdentityManager.Services.ControllerService.IControllerService;
+using IdentityManager.Services.ControllerService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +41,11 @@ builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddScoped<UserManager<ApplicationUser>>();
 builder.Services.AddScoped<SignInManager<ApplicationUser>>();
 builder.Services.AddScoped<RoleManager<IdentityRole>>();
+
+// Add Services
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 // Add Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -71,6 +79,10 @@ builder.Services.AddAuthentication(options =>
 });
 
 
+// Register the global exception handler
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -79,6 +91,10 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+
+// Use the global exception handler
+app.UseExceptionHandler();
+
 
 app.UseHttpsRedirection();
 app.UseAuthentication(); 

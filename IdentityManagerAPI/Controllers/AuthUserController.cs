@@ -6,6 +6,8 @@ using Models.DTOs.Auth;
 using Models;
 using System.Net;
 using DataAcess.Repos.IRepos;
+using Models.Domain;
+using IdentityManager.Services.ControllerService.IControllerService;
 
 namespace IdentityManagerAPI.Controllers
 {
@@ -13,29 +15,22 @@ namespace IdentityManagerAPI.Controllers
     [ApiController]
     public class AuthUserController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
-
-        public AuthUserController(IUserRepository userRepository)
+        private readonly IAuthService _authService;
+        public AuthUserController(IAuthService authService)
         {
-            this._userRepository = userRepository;
+            _authService = authService;
         }
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO loginRequestDTO)
         {
-            var entity = await _userRepository.Login(loginRequestDTO);
-
-            return Ok(entity);
-
+            var result = await _authService.LoginAsync(loginRequestDTO);
+            return Ok(result);
         }
-
-
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequestDTO registerRequestDTO)
         {
-            var entity = await _userRepository.Register(registerRequestDTO);
-            return Ok(entity);
+            var result = await _authService.RegisterAsync(registerRequestDTO);
+            return Ok(result);
         }
-
-
     }
 }

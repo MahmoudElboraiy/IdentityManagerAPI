@@ -25,17 +25,29 @@ namespace DataAcess.Repos
 
         public async Task<Image> Upload(Image image)
         {
-            var localFilepath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", $"{image.FileName}.{image.FileExtension}");
+            if (image.File == null || image.File.Length == 0)
+            {
+                throw new ArgumentException("Uploaded file is empty or null.");
+            }
 
-            using var fileStream = new FileStream(localFilepath, FileMode.Create);
-            await image.File.CopyToAsync(fileStream);
+            var folderPath = Path.Combine(webHostEnvironment.ContentRootPath, "Images");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
 
-            //                                          https                ://localhost:
+            var localFilepath = Path.Combine(folderPath, $"{image.FileName}{image.FileExtension}");
+
+            Console.WriteLine($"Saving to: {localFilepath}");
+            Console.WriteLine($"File Size: {image.File.Length} bytes");
+
+            using (var fileStream = new FileStream(localFilepath, FileMode.CreateNew))
+            {
+                await image.File.CopyToAsync(fileStream);
+            }
+
             var urlFilepath = $"{contextAccessor.HttpContext.Request.Scheme}://{contextAccessor.HttpContext.Request.Host}" +
-                //                5000
-                $"{contextAccessor.HttpContext.Request.PathBase}" +
-                // /Images       /imagename      .jpg
-                $"/Images/{image.FileName}.{image.FileExtension}";
+                              $"{contextAccessor.HttpContext.Request.PathBase}/Images/{image.FileName}{image.FileExtension}";
 
             image.FilePath = urlFilepath;
             await db.Image.AddAsync(image);
@@ -43,5 +55,6 @@ namespace DataAcess.Repos
 
             return image;
         }
+
     }
 }

@@ -8,7 +8,7 @@ namespace Models.Domain
     {
         [Required]
         public string Name { get; set; }
-        public int ImageId { get; set; }
+        public int? ImageId { get; set; }
         
         // Navigation property
         [ForeignKey("ImageId")]
