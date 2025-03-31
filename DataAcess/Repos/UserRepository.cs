@@ -51,7 +51,7 @@ namespace DataAcess.Repos
 
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
-            var user = await userManager.FindByNameAsync(loginRequestDTO.UserName);
+            var user = await userManager.FindByEmailAsync(loginRequestDTO.Email);
             if (user == null || !await userManager.CheckPasswordAsync(user, loginRequestDTO.Password))
             {
                 return new LoginResponseDTO()
@@ -87,16 +87,21 @@ namespace DataAcess.Repos
 
         public async Task<UserDTO> Register(RegisterRequestDTO registerRequestDTO)
         {
+
             var user = new ApplicationUser
             {
-                UserName = registerRequestDTO.UserName,
-                Name = registerRequestDTO.Name,
+                UserName = registerRequestDTO.Email,
+                FullName =registerRequestDTO.FullName,
                 Email = registerRequestDTO.Email,
                 NormalizedEmail = registerRequestDTO.Email.ToUpper()
             };
 
             var userDTO = new UserDTO();
-
+            if (registerRequestDTO.Password != registerRequestDTO.ConfirmPassword)
+            {
+                userDTO.ErrorMessages.Add("Password and Confirm Password do not match.");
+                return userDTO;
+            }
             try
             {
                 var result = await userManager.CreateAsync(user, registerRequestDTO.Password);

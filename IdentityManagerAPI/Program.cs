@@ -52,12 +52,14 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
 
 // Add OpenAPI with Bearer Authentication Support
-builder.Services.AddOpenApi("v1", options =>
-{
-    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
-});
+//builder.Services.AddOpenApi("v1", options =>
+//{
+//    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+//});
 
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // Configure JWT Authentication insted of cookies
 var key = Encoding.ASCII.GetBytes(builder.Configuration["ApiSettings:Secret"]);
@@ -88,7 +90,9 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    //app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
     app.MapScalarApiReference();
 }
 

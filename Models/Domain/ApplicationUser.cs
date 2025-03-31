@@ -7,7 +7,7 @@ namespace Models.Domain
     public class ApplicationUser : IdentityUser
     {
         [Required]
-        public string Name { get; set; }
+        public string FullName { get; set; }
         public int? ImageId { get; set; }
         
         // Navigation property
